@@ -33,6 +33,11 @@ const makeVerificationCsvObject = function (courseCode, lms, bsid, cid, bsCourse
     };
 };
 
+const dontPublish = function (checkModuleName, checkActivityName) {
+    if ( true ) return true;
+    return false;
+};
+
 /*************************************************************************
  * getDataFromCanvas
  * @param {Object} csvParsed d3-dsv parsed csv
@@ -65,16 +70,19 @@ const getDataFromCanvas = async (csvParsed) => {
 const getDataFromBrightspace = async (csvParsed) => {
     var output = {production: [], verification: []};
     await d2l.login();
-    var topics = await d2l.getTopics(16204);
-    console.dir(topics, {depth: -1});
+    // console.dir(topics, {depth: null});
     var filteredCourses = csvParsed.filter( (course) => {
         if (course.lms.toLowerCase().includes('brightspace') || course.lms.toLowerCase().includes('both')) return course;
     } );
-    var mapCourses = filteredCourses.map( () => {
-        // output.verification.push(makeVerificationCsvObject(csvCourseData.courseCode, csvCourseData.lms, csvCourseData.brightspaceId, csvCourseData.canvasId, null, courseObject.name, null, courseObject.course_code));
-        // output.production.push(makeProductionCsvObject('canvas', csvCourseData.courseCode, courseModule.name, moduleItem.title, moduleItem.html_url));
+    var mapCourses = filteredCourses.map( async (csvCourseData) => {
+        var topics = await d2l.getTopics(csvCourseData.brightspaceId);
+        topics.forEach( (topic) => {
+            topic.ancestryPath = topic.ancestryPath.replace('Ponder \\ Prove', 'Ponder / Prove'); // path.join in the d2lFlattenToc.js thinks that Ponder / Prove is a file path, so switches the / to \. This fixes it.
+            output.production.push(makeProductionCsvObject('brightspace', csvCourseData.courseCode, topic.ancestryPath, topic.Title, topic.Url));
+            // output.verification.push(makeVerificationCsvObject(csvCourseData.courseCode, csvCourseData.lms, csvCourseData.brightspaceId, csvCourseData.canvasId, /* bsCourseName */null, null, /* bsCourseCode */null, null));
+        } );
     } );
-    Promise.all(mapCourses);
+    await Promise.all(mapCourses);
     return output;
 };
 
