@@ -67,6 +67,14 @@ const getDataFromBrightspace = async (csvParsed) => {
     await d2l.login();
     var topics = await d2l.getTopics(16204);
     console.dir(topics, {depth: -1});
+    var filteredCourses = csvParsed.filter( (course) => {
+        if (course.lms.toLowerCase().includes('brightspace') || course.lms.toLowerCase().includes('both')) return course;
+    } );
+    var mapCourses = filteredCourses.map( () => {
+        // output.verification.push(makeVerificationCsvObject(csvCourseData.courseCode, csvCourseData.lms, csvCourseData.brightspaceId, csvCourseData.canvasId, null, courseObject.name, null, courseObject.course_code));
+        // output.production.push(makeProductionCsvObject('canvas', csvCourseData.courseCode, courseModule.name, moduleItem.title, moduleItem.html_url));
+    } );
+    Promise.all(mapCourses);
     return output;
 };
 
