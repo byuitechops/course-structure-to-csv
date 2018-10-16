@@ -20,17 +20,22 @@ function flatten(modules, topics = [], ancestryPath) {
 }
 
 async function getTopics(cid) {
-    var toc = await new Promise((res, rej) => {
-        request.get(`${baseurl}/d2l/api/le/1.24/${cid}/content/toc`, (err, _, body) => {
-            if (err) return rej(err);
-            // console.dir(JSON.parse(body), {depth: null});
-            res(JSON.parse(body));
+    try {
+        var toc = await new Promise((res, rej) => {
+            request.get(`${baseurl}/d2l/api/le/1.24/${cid}/content/toc`, (err, resp, body) => {
+                if (err || resp.statusCode !== 200) return rej(err);
+                // console.dir(JSON.parse(body), {depth: -1});
+                res(JSON.parse(body));
+            });
         });
-    });
-    toc.Modules.parentModuleTitle = toc.Title;
-    var topics = [].concat(...flatten(toc.Modules));
+        toc.Modules.parentModuleTitle = toc.Title;
+        var topics = [].concat(...flatten(toc.Modules));
+        
+        return topics;
+    } catch (e) {
+        // console.dir(toc, {depth:null});
 
-    return topics;
+    }
 }
 
 async function login(subdomain = 'byui') {

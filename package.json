@@ -1,0 +1,26 @@
+{
+  "name": "course-structure-to-csv",
+  "version": "1.0.0",
+  "description": "Runs API for D2L and Canvas and lists activities for all modules in the course",
+  "main": "main.js",
+  "dependencies": {
+    "canvas-api-wrapper": "^3.3.3",
+    "d2l-login": "git+https://github.com/byuitechops/d2l-login.git",
+    "d3-dsv": "^1.0.10",
+    "flat": "^4.1.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/byuitechops/course-structure-to-csv.git"
+  },
+  "author": "Aaron Shiffler, Ben Earl",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/byuitechops/course-structure-to-csv/issues"
+  },
+  "homepage": "https://github.com/byuitechops/course-structure-to-csv#readme"
+}
